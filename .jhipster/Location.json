@@ -1,0 +1,43 @@
+{
+  "name": "Location",
+  "fields": [
+    {
+      "fieldName": "address",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "latitude",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "longitude",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "city",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "place",
+      "otherEntityRelationshipName": "location",
+      "relationshipName": "place",
+      "ownerSide": false
+    }
+  ],
+  "changelogDate": "20210308125150",
+  "entityTableName": "location",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

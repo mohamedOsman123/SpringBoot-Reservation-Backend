@@ -1,0 +1,59 @@
+{
+  "name": "Place",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "specification",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "location",
+      "otherEntityRelationshipName": "place",
+      "relationshipName": "location",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "image",
+      "otherEntityRelationshipName": "place",
+      "relationshipName": "images"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "reservation",
+      "otherEntityRelationshipName": "place",
+      "relationshipName": "reservations"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "category",
+      "otherEntityRelationshipName": "places",
+      "relationshipName": "category",
+      "otherEntityField": "name"
+    }
+  ],
+  "changelogDate": "20210308125250",
+  "entityTableName": "place",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

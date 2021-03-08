@@ -1,0 +1,60 @@
+
+entity Category {
+
+    name String required
+    description String
+
+}
+
+entity Location {
+	address String required
+	latitude String
+    longitude String
+	city String required
+}
+
+entity Place {
+	name String required
+    specification String required
+    description String
+
+}
+
+
+entity Image {
+	imageUrl String required
+	main Boolean required
+}
+
+enum ReservationType {
+	DAILY, WEEKLY, MONTHLY
+}
+
+entity Reservation {
+    type ReservationType
+    period Integer
+    startDate Instant
+    endDate Instant
+}
+
+
+relationship OneToOne {
+	Place{location} to Location{place(name)}
+}
+
+relationship OneToMany {
+	Place{images(imageUrl)} to Image{place(name)}
+    Place{reservations} to Reservation{place(name)}
+
+	Category{places(name)} to	Place{category(name)}
+    Category{images(imageUrl)} to	Image{category(name)}
+}
+
+relationship ManyToOne {
+	Reservation{user(login)} to User
+}
+
+paginate all with pagination
+service all with serviceImpl
+filter all
+dto all with mapstruct

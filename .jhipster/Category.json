@@ -1,0 +1,39 @@
+{
+  "name": "Category",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "place",
+      "otherEntityRelationshipName": "category",
+      "relationshipName": "places"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "image",
+      "otherEntityRelationshipName": "category",
+      "relationshipName": "images"
+    }
+  ],
+  "changelogDate": "20210308125050",
+  "entityTableName": "category",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

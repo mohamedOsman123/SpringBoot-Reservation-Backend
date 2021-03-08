@@ -1,0 +1,49 @@
+{
+  "name": "Reservation",
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "ReservationType",
+      "fieldValues": "DAILY,WEEKLY,MONTHLY"
+    },
+    {
+      "fieldName": "period",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "startDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "Instant"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "reservation",
+      "relationshipName": "user",
+      "otherEntityField": "login"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "place",
+      "otherEntityRelationshipName": "reservations",
+      "relationshipName": "place",
+      "otherEntityField": "name"
+    }
+  ],
+  "changelogDate": "20210308125450",
+  "entityTableName": "reservation",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

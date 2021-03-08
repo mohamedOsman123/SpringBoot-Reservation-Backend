@@ -1,0 +1,41 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.hesho.reservation",
+      "nativeLanguage": "en"
+    },
+    "jhipsterVersion": "6.10.5",
+    "applicationType": "monolith",
+    "baseName": "ReservationBackend",
+    "packageName": "com.hesho.reservation",
+    "packageFolder": "com/hesho/reservation",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "NzQ0MmZkMDg3M2RjMGNmOWIzY2VhYjA4ZmEyZThkYzI5NDBjZTEwOGEzNjM3NWQwNWVjYWE3NWI4NDBhNTI0N2FkNjhmMmNlZjA4YzEyNzY0YmI3ZmUwYjBlMjQxYzhkZjc5YmZlNjdlZDJiN2UxMDNhYThlMTE5MjE4NGMyYTM=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "skipClient": true,
+    "creationTimestamp": 1615207633505,
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": true,
+    "nativeLanguage": "en",
+    "languages": ["en", "ar-ly"],
+    "blueprints": []
+  }
+}
