@@ -10,14 +10,11 @@
     <name>Reservation Backend</name>
 
     <repositories>
-        <!-- jhipster-needle-maven-repository -->
     </repositories>
 
     <pluginRepositories>
-        <!-- jhipster-needle-maven-plugin-repository -->
-    </pluginRepositories>
 
-    <!-- jhipster-needle-distribution-management -->
+    </pluginRepositories>
 
     <properties>
         <!-- Build properties -->
@@ -32,7 +29,6 @@
         <argLine>-Djava.security.egd=file:/dev/./urandom -Xmx256m</argLine>
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
         <run.addResources>false</run.addResources>
-        <!-- These remain empty unless the corresponding profile is active -->
         <profile.no-liquibase />
         <profile.swagger />
         <profile.tls />
@@ -313,6 +309,11 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>7.1.0</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>

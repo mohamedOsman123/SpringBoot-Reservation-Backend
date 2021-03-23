@@ -8,7 +8,7 @@ import com.hesho.reservation.domain.enumeration.ReservationType;
  * A DTO for the {@link com.hesho.reservation.domain.Reservation} entity.
  */
 public class ReservationDTO implements Serializable {
-    
+
     private Long id;
 
     private ReservationType type;
@@ -19,7 +19,6 @@ public class ReservationDTO implements Serializable {
 
     private Instant endDate;
 
-
     private Long userId;
 
     private String userLogin;
@@ -27,7 +26,7 @@ public class ReservationDTO implements Serializable {
     private Long placeId;
 
     private String placeName;
-    
+
     public Long getId() {
         return id;
     }

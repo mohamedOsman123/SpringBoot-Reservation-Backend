@@ -12,6 +12,11 @@
 # Full reference is available at:
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
+image:
+  category:
+    dir: /home/mohamed/Pictures/categeroy
+  place:
+    dir: /home/mohamed/Pictures/place
 
 logging:
   level:
@@ -37,9 +42,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/ReservationBackend
-    username: ReservationBackend
-    password:
+    url: jdbc:postgresql://localhost:5432/Reservation?useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+    username: nona
+    password: nona
     hikari:
       poolName: Hikari
       auto-commit: false

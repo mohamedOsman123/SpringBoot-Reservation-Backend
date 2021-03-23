@@ -1,6 +1,12 @@
 package com.hesho.reservation.web.rest;
 
+import com.google.cloud.storage.StorageException;
+import com.hesho.reservation.domain.Place;
+import com.hesho.reservation.security.AuthoritiesConstants;
+import com.hesho.reservation.service.CategoryService;
 import com.hesho.reservation.service.ImageService;
+import com.hesho.reservation.service.PlaceService;
+import com.hesho.reservation.service.dto.PlaceDTO;
 import com.hesho.reservation.web.rest.errors.BadRequestAlertException;
 import com.hesho.reservation.service.dto.ImageDTO;
 import com.hesho.reservation.service.dto.ImageCriteria;
@@ -16,6 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * REST controller for managing {@link com.hesho.reservation.domain.Image}.
@@ -44,10 +52,13 @@ public class ImageResource {
 
     private final ImageQueryService imageQueryService;
 
+
     public ImageResource(ImageService imageService, ImageQueryService imageQueryService) {
         this.imageService = imageService;
         this.imageQueryService = imageQueryService;
+
     }
+
 
     /**
      * {@code POST  /images} : Create a new image.
@@ -57,6 +68,7 @@ public class ImageResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/images")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<ImageDTO> createImage(@Valid @RequestBody ImageDTO imageDTO) throws URISyntaxException {
         log.debug("REST request to save Image : {}", imageDTO);
         if (imageDTO.getId() != null) {
@@ -69,6 +81,22 @@ public class ImageResource {
     }
 
     /**
+     * {@code POST  /images} : Create a new image.
+     *
+     * @param imageDTO the imageDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new imageDTO, or with status {@code 400 (Bad Request)} if the image has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/images/place/{placeId}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<Map<String, String>> createImageForPlace(@Valid @RequestBody Set<MultipartFile > images,@PathVariable Long placeId) throws URISyntaxException {
+
+        log.debug("REST request to save Place images");
+        Map<String, String> result = imageService.saveImagesForPlace(images,placeId);
+        return ResponseEntity.ok().body(result);
+    }
+
+    /**
      * {@code PUT  /images} : Updates an existing image.
      *
      * @param imageDTO the imageDTO to update.
@@ -78,6 +106,7 @@ public class ImageResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/images")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<ImageDTO> updateImage(@Valid @RequestBody ImageDTO imageDTO) throws URISyntaxException {
         log.debug("REST request to update Image : {}", imageDTO);
         if (imageDTO.getId() == null) {
@@ -111,6 +140,7 @@ public class ImageResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
     @GetMapping("/images/count")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Long> countImages(ImageCriteria criteria) {
         log.debug("REST request to count Images by criteria: {}", criteria);
         return ResponseEntity.ok().body(imageQueryService.countByCriteria(criteria));
@@ -129,6 +159,26 @@ public class ImageResource {
         return ResponseUtil.wrapOrNotFound(imageDTO);
     }
 
+    @GetMapping(value = "/images/place/{placeId}",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<?> getMainImageByPlaceId(@PathVariable Long placeId) {
+        log.debug("REST request to get Main Image By CategoryId : {}", placeId);
+        try {
+            return ResponseEntity.ok(imageService.findOneByPlaceIdAndMainIsTrue(placeId));
+        } catch (StorageException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping(value="/images/category/{categoryId}",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<?> getMainImageByCategoryId(@PathVariable Long categoryId) {
+        log.debug("REST request to get Main Image By CategoryId : {}", categoryId);
+        try {
+            return ResponseEntity.ok(imageService.findOneByCategoryIdAndMainIsTrue(categoryId));
+        } catch (StorageException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     /**
      * {@code DELETE  /images/:id} : delete the "id" image.
      *
@@ -136,6 +186,7 @@ public class ImageResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/images/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteImage(@PathVariable Long id) {
         log.debug("REST request to delete Image : {}", id);
         imageService.delete(id);

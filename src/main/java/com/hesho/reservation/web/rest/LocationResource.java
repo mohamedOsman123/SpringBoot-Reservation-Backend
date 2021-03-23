@@ -1,5 +1,6 @@
 package com.hesho.reservation.web.rest;
 
+import com.hesho.reservation.security.AuthoritiesConstants;
 import com.hesho.reservation.service.LocationService;
 import com.hesho.reservation.web.rest.errors.BadRequestAlertException;
 import com.hesho.reservation.service.dto.LocationDTO;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +60,7 @@ public class LocationResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/locations")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<LocationDTO> createLocation(@Valid @RequestBody LocationDTO locationDTO) throws URISyntaxException {
         log.debug("REST request to save Location : {}", locationDTO);
         if (locationDTO.getId() != null) {
@@ -79,6 +82,7 @@ public class LocationResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/locations")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<LocationDTO> updateLocation(@Valid @RequestBody LocationDTO locationDTO) throws URISyntaxException {
         log.debug("REST request to update Location : {}", locationDTO);
         if (locationDTO.getId() == null) {
@@ -112,6 +116,7 @@ public class LocationResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
     @GetMapping("/locations/count")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Long> countLocations(LocationCriteria criteria) {
         log.debug("REST request to count Locations by criteria: {}", criteria);
         return ResponseEntity.ok().body(locationQueryService.countByCriteria(criteria));
@@ -137,6 +142,7 @@ public class LocationResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/locations/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
         log.debug("REST request to delete Location : {}", id);
         locationService.delete(id);

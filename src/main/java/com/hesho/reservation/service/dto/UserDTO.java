@@ -29,6 +29,7 @@ public class UserDTO {
     private String lastName;
 
     @Email
+    @NotBlank
     @Size(min = 5, max = 254)
     private String email;
 

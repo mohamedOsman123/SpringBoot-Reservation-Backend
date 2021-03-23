@@ -1,5 +1,6 @@
 package com.hesho.reservation.web.rest;
 
+import com.hesho.reservation.security.AuthoritiesConstants;
 import com.hesho.reservation.service.CategoryService;
 import com.hesho.reservation.web.rest.errors.BadRequestAlertException;
 import com.hesho.reservation.service.dto.CategoryDTO;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +59,7 @@ public class CategoryResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/categories")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) throws URISyntaxException {
         log.debug("REST request to save Category : {}", categoryDTO);
         if (categoryDTO.getId() != null) {
@@ -78,6 +81,7 @@ public class CategoryResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/categories")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<CategoryDTO> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO) throws URISyntaxException {
         log.debug("REST request to update Category : {}", categoryDTO);
         if (categoryDTO.getId() == null) {
@@ -136,6 +140,7 @@ public class CategoryResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/categories/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         log.debug("REST request to delete Category : {}", id);
         categoryService.delete(id);

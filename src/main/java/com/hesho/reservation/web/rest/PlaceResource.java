@@ -1,5 +1,6 @@
 package com.hesho.reservation.web.rest;
 
+import com.hesho.reservation.security.AuthoritiesConstants;
 import com.hesho.reservation.service.PlaceService;
 import com.hesho.reservation.web.rest.errors.BadRequestAlertException;
 import com.hesho.reservation.service.dto.PlaceDTO;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +59,7 @@ public class PlaceResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/places")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<PlaceDTO> createPlace(@Valid @RequestBody PlaceDTO placeDTO) throws URISyntaxException {
         log.debug("REST request to save Place : {}", placeDTO);
         if (placeDTO.getId() != null) {
@@ -78,6 +81,7 @@ public class PlaceResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/places")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<PlaceDTO> updatePlace(@Valid @RequestBody PlaceDTO placeDTO) throws URISyntaxException {
         log.debug("REST request to update Place : {}", placeDTO);
         if (placeDTO.getId() == null) {
@@ -136,6 +140,7 @@ public class PlaceResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/places/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deletePlace(@PathVariable Long id) {
         log.debug("REST request to delete Place : {}", id);
         placeService.delete(id);

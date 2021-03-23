@@ -66,7 +66,6 @@ public class ReservationResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
-
     /**
      * {@code PUT  /reservations} : Updates an existing reservation.
      *
@@ -78,6 +77,27 @@ public class ReservationResource {
      */
     @PutMapping("/reservations")
     public ResponseEntity<ReservationDTO> updateReservation(@RequestBody ReservationDTO reservationDTO) throws URISyntaxException {
+        log.debug("REST request to update Reservation : {}", reservationDTO);
+        if (reservationDTO.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        ReservationDTO result = reservationService.save(reservationDTO);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reservationDTO.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * {@code PUT  /reservations} : Updates an existing status reservation.
+     *
+     * @param reservationDTO the reservationDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reservationDTO,
+     * or with status {@code 400 (Bad Request)} if the reservationDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the reservationDTO couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping("/reservations/updateStatus")
+    public ResponseEntity<ReservationDTO> updateReservationStatus(@RequestBody ReservationDTO reservationDTO) throws URISyntaxException {
         log.debug("REST request to update Reservation : {}", reservationDTO);
         if (reservationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
