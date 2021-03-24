@@ -7,15 +7,14 @@ import java.io.Serializable;
  * A DTO for the {@link com.hesho.reservation.domain.Image} entity.
  */
 public class ImageDTO implements Serializable {
-    
+
     private Long id;
 
     @NotNull
     private String imageUrl;
 
     @NotNull
-    private Boolean main;
-
+    private Boolean main=false;
 
     private Long placeId;
 
@@ -24,7 +23,7 @@ public class ImageDTO implements Serializable {
     private Long categoryId;
 
     private String categoryName;
-    
+
     public Long getId() {
         return id;
     }
