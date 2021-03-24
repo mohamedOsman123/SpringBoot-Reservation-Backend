@@ -83,16 +83,15 @@ public class ImageResource {
     /**
      * {@code POST  /images} : Create a new image.
      *
-     * @param imageDTO the imageDTO to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new imageDTO, or with status {@code 400 (Bad Request)} if the image has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/images/place/{placeId}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<Map<String, String>> createImageForPlace(@Valid @RequestBody Set<MultipartFile > images,@PathVariable Long placeId) throws URISyntaxException {
+    public ResponseEntity<ImageDTO> addImageForPlace(@Valid @RequestBody MultipartFile  image,@PathVariable Long placeId) throws URISyntaxException {
 
         log.debug("REST request to save Place images");
-        Map<String, String> result = imageService.saveImagesForPlace(images,placeId);
+       ImageDTO result = imageService.saveImagesForPlace(image,placeId);
         return ResponseEntity.ok().body(result);
     }
 

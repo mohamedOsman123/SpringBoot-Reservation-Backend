@@ -78,13 +78,11 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Map<String, String> saveImagesForPlace(Set<MultipartFile>images, Long placeId){
+    public ImageDTO saveImagesForPlace(MultipartFile image, Long placeId){
         // find place by placeId
        Optional<Place> place=placeRepository.findById(placeId);
-
        if (place.isPresent()) {
            Place placeEntity=place.get();
-               for (MultipartFile image : images) {
                    // create new image entity to save images for place
                    Image imageEntity=new Image();
                    String fileName = StringUtils.cleanPath(RandomUtil.generateRandomAlphanumericString() + "." + FilenameUtils.getExtension(image.getOriginalFilename()));
@@ -100,17 +98,16 @@ public class ImageServiceImpl implements ImageService {
                      imageEntity.setImageUrl(fileName);
                      imageEntity.setPlace(placeEntity);
                      imageRepository.save(imageEntity);
+                     return imageMapper.toDto(imageEntity);
                    }
                }
                    catch(IOException e){
                        throw new StorageException("Failed to store file " + fileName, e);
                    }
            }
-       }
        else {
-           throw new StorageException("Could not read file: " + images);
+           throw new StorageException("Could not read file: " + image);
        }
-        return Collections.singletonMap("Status", "Images Saved Successfully for Place Id:"+placeId);
     }
 
 

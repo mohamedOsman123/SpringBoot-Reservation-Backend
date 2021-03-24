@@ -58,7 +58,7 @@ public interface ImageService {
     public UrlResource findOneByCategoryIdAndMainIsTrue(Long id);
 
 
-   public Map<String, String> saveImagesForPlace(Set<MultipartFile>images, Long placeId);
+   public ImageDTO saveImagesForPlace(MultipartFile image, Long placeId);
 
     /**
      * Delete the "id" image.
