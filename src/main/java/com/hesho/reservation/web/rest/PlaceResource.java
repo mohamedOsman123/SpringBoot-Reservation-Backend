@@ -87,7 +87,7 @@ public class PlaceResource {
         if (placeDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        PlaceDTO result = placeService.save(placeDTO);
+        PlaceDTO result = placeService.update(placeDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, placeDTO.getId().toString()))
             .body(result);

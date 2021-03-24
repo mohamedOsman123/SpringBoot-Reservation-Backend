@@ -20,6 +20,8 @@ public interface PlaceService {
      */
     PlaceDTO save(PlaceDTO placeDTO);
 
+    PlaceDTO update(PlaceDTO placeDTO);
+
     /**
      * Get all the places.
      *
