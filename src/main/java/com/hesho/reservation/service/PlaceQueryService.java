@@ -100,6 +100,9 @@ public class PlaceQueryService extends QueryService<Place> {
             if (criteria.getDescription() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getDescription(), Place_.description));
             }
+            if (criteria.getPrice() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getPrice(), Place_.price));
+            }
             if (criteria.getLocationId() != null) {
                 specification = specification.and(buildSpecification(criteria.getLocationId(),
                     root -> root.join(Place_.location, JoinType.LEFT).get(Location_.id)));

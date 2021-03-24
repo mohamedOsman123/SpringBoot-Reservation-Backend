@@ -18,6 +18,8 @@ public class PlaceDTO implements Serializable {
 
     private String description;
 
+    private Double price;
+
 
     private Long locationId;
 
@@ -55,6 +57,14 @@ public class PlaceDTO implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public Long getLocationId() {
@@ -106,6 +116,7 @@ public class PlaceDTO implements Serializable {
             ", name='" + getName() + "'" +
             ", specification='" + getSpecification() + "'" +
             ", description='" + getDescription() + "'" +
+            ", price=" + getPrice() +
             ", locationId=" + getLocationId() +
             ", categoryId=" + getCategoryId() +
             ", categoryName='" + getCategoryName() + "'" +

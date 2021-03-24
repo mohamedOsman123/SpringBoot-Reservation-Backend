@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import io.github.jhipster.service.Criteria;
 import com.hesho.reservation.domain.enumeration.ReservationType;
+import com.hesho.reservation.domain.enumeration.ReservationStatus;
 import io.github.jhipster.service.filter.BooleanFilter;
 import io.github.jhipster.service.filter.DoubleFilter;
 import io.github.jhipster.service.filter.Filter;
@@ -41,6 +42,24 @@ public class ReservationCriteria implements Serializable, Criteria {
         }
 
     }
+    /**
+     * Class for filtering ReservationStatus
+     */
+    public static class ReservationStatusFilter extends Filter<ReservationStatus> {
+
+        public ReservationStatusFilter() {
+        }
+
+        public ReservationStatusFilter(ReservationStatusFilter filter) {
+            super(filter);
+        }
+
+        @Override
+        public ReservationStatusFilter copy() {
+            return new ReservationStatusFilter(this);
+        }
+
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -48,11 +67,13 @@ public class ReservationCriteria implements Serializable, Criteria {
 
     private ReservationTypeFilter type;
 
-    private IntegerFilter period;
+    private ReservationStatusFilter status;
 
     private InstantFilter startDate;
 
     private InstantFilter endDate;
+
+    private DoubleFilter fees;
 
     private LongFilter userId;
 
@@ -64,9 +85,10 @@ public class ReservationCriteria implements Serializable, Criteria {
     public ReservationCriteria(ReservationCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
         this.type = other.type == null ? null : other.type.copy();
-        this.period = other.period == null ? null : other.period.copy();
+        this.status = other.status == null ? null : other.status.copy();
         this.startDate = other.startDate == null ? null : other.startDate.copy();
         this.endDate = other.endDate == null ? null : other.endDate.copy();
+        this.fees = other.fees == null ? null : other.fees.copy();
         this.userId = other.userId == null ? null : other.userId.copy();
         this.placeId = other.placeId == null ? null : other.placeId.copy();
     }
@@ -92,12 +114,12 @@ public class ReservationCriteria implements Serializable, Criteria {
         this.type = type;
     }
 
-    public IntegerFilter getPeriod() {
-        return period;
+    public ReservationStatusFilter getStatus() {
+        return status;
     }
 
-    public void setPeriod(IntegerFilter period) {
-        this.period = period;
+    public void setStatus(ReservationStatusFilter status) {
+        this.status = status;
     }
 
     public InstantFilter getStartDate() {
@@ -114,6 +136,14 @@ public class ReservationCriteria implements Serializable, Criteria {
 
     public void setEndDate(InstantFilter endDate) {
         this.endDate = endDate;
+    }
+
+    public DoubleFilter getFees() {
+        return fees;
+    }
+
+    public void setFees(DoubleFilter fees) {
+        this.fees = fees;
     }
 
     public LongFilter getUserId() {
@@ -145,9 +175,10 @@ public class ReservationCriteria implements Serializable, Criteria {
         return
             Objects.equals(id, that.id) &&
             Objects.equals(type, that.type) &&
-            Objects.equals(period, that.period) &&
+            Objects.equals(status, that.status) &&
             Objects.equals(startDate, that.startDate) &&
             Objects.equals(endDate, that.endDate) &&
+            Objects.equals(fees, that.fees) &&
             Objects.equals(userId, that.userId) &&
             Objects.equals(placeId, that.placeId);
     }
@@ -157,9 +188,10 @@ public class ReservationCriteria implements Serializable, Criteria {
         return Objects.hash(
         id,
         type,
-        period,
+        status,
         startDate,
         endDate,
+        fees,
         userId,
         placeId
         );
@@ -171,9 +203,10 @@ public class ReservationCriteria implements Serializable, Criteria {
         return "ReservationCriteria{" +
                 (id != null ? "id=" + id + ", " : "") +
                 (type != null ? "type=" + type + ", " : "") +
-                (period != null ? "period=" + period + ", " : "") +
+                (status != null ? "status=" + status + ", " : "") +
                 (startDate != null ? "startDate=" + startDate + ", " : "") +
                 (endDate != null ? "endDate=" + endDate + ", " : "") +
+                (fees != null ? "fees=" + fees + ", " : "") +
                 (userId != null ? "userId=" + userId + ", " : "") +
                 (placeId != null ? "placeId=" + placeId + ", " : "") +
             "}";

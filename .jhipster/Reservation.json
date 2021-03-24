@@ -7,8 +7,9 @@
       "fieldValues": "DAILY,WEEKLY,MONTHLY"
     },
     {
-      "fieldName": "period",
-      "fieldType": "Integer"
+      "fieldName": "status",
+      "fieldType": "ReservationStatus",
+      "fieldValues": "PENDING,APPROVED,PAID"
     },
     {
       "fieldName": "startDate",
@@ -17,6 +18,10 @@
     {
       "fieldName": "endDate",
       "fieldType": "Instant"
+    },
+    {
+      "fieldName": "fees",
+      "fieldType": "Double"
     }
   ],
   "relationships": [

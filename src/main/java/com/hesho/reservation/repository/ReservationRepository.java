@@ -1,6 +1,7 @@
 package com.hesho.reservation.repository;
 
 import com.hesho.reservation.domain.Reservation;
+
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 

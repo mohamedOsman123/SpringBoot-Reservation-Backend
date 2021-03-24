@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.hesho.reservation.domain.enumeration.ReservationType;
+import com.hesho.reservation.domain.enumeration.ReservationStatus;
 /**
  * Integration tests for the {@link ReservationResource} REST controller.
  */
@@ -42,15 +43,18 @@ public class ReservationResourceIT {
     private static final ReservationType DEFAULT_TYPE = ReservationType.DAILY;
     private static final ReservationType UPDATED_TYPE = ReservationType.WEEKLY;
 
-    private static final Integer DEFAULT_PERIOD = 1;
-    private static final Integer UPDATED_PERIOD = 2;
-    private static final Integer SMALLER_PERIOD = 1 - 1;
+    private static final ReservationStatus DEFAULT_STATUS = ReservationStatus.PENDING;
+    private static final ReservationStatus UPDATED_STATUS = ReservationStatus.APPROVED;
 
     private static final Instant DEFAULT_START_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_START_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     private static final Instant DEFAULT_END_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_END_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final Double DEFAULT_FEES = 1D;
+    private static final Double UPDATED_FEES = 2D;
+    private static final Double SMALLER_FEES = 1D - 1D;
 
     @Autowired
     private ReservationRepository reservationRepository;
@@ -81,9 +85,10 @@ public class ReservationResourceIT {
     public static Reservation createEntity(EntityManager em) {
         Reservation reservation = new Reservation()
             .type(DEFAULT_TYPE)
-            .period(DEFAULT_PERIOD)
+            .status(DEFAULT_STATUS)
             .startDate(DEFAULT_START_DATE)
-            .endDate(DEFAULT_END_DATE);
+            .endDate(DEFAULT_END_DATE)
+            .fees(DEFAULT_FEES);
         return reservation;
     }
     /**
@@ -95,9 +100,10 @@ public class ReservationResourceIT {
     public static Reservation createUpdatedEntity(EntityManager em) {
         Reservation reservation = new Reservation()
             .type(UPDATED_TYPE)
-            .period(UPDATED_PERIOD)
+            .status(UPDATED_STATUS)
             .startDate(UPDATED_START_DATE)
-            .endDate(UPDATED_END_DATE);
+            .endDate(UPDATED_END_DATE)
+            .fees(UPDATED_FEES);
         return reservation;
     }
 
@@ -122,9 +128,10 @@ public class ReservationResourceIT {
         assertThat(reservationList).hasSize(databaseSizeBeforeCreate + 1);
         Reservation testReservation = reservationList.get(reservationList.size() - 1);
         assertThat(testReservation.getType()).isEqualTo(DEFAULT_TYPE);
-        assertThat(testReservation.getPeriod()).isEqualTo(DEFAULT_PERIOD);
+        assertThat(testReservation.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testReservation.getStartDate()).isEqualTo(DEFAULT_START_DATE);
         assertThat(testReservation.getEndDate()).isEqualTo(DEFAULT_END_DATE);
+        assertThat(testReservation.getFees()).isEqualTo(DEFAULT_FEES);
     }
 
     @Test
@@ -160,9 +167,10 @@ public class ReservationResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reservation.getId().intValue())))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
-            .andExpect(jsonPath("$.[*].period").value(hasItem(DEFAULT_PERIOD)))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].startDate").value(hasItem(DEFAULT_START_DATE.toString())))
-            .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())));
+            .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())))
+            .andExpect(jsonPath("$.[*].fees").value(hasItem(DEFAULT_FEES.doubleValue())));
     }
     
     @Test
@@ -177,9 +185,10 @@ public class ReservationResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(reservation.getId().intValue()))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
-            .andExpect(jsonPath("$.period").value(DEFAULT_PERIOD))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.startDate").value(DEFAULT_START_DATE.toString()))
-            .andExpect(jsonPath("$.endDate").value(DEFAULT_END_DATE.toString()));
+            .andExpect(jsonPath("$.endDate").value(DEFAULT_END_DATE.toString()))
+            .andExpect(jsonPath("$.fees").value(DEFAULT_FEES.doubleValue()));
     }
 
 
@@ -256,108 +265,55 @@ public class ReservationResourceIT {
 
     @Test
     @Transactional
-    public void getAllReservationsByPeriodIsEqualToSomething() throws Exception {
+    public void getAllReservationsByStatusIsEqualToSomething() throws Exception {
         // Initialize the database
         reservationRepository.saveAndFlush(reservation);
 
-        // Get all the reservationList where period equals to DEFAULT_PERIOD
-        defaultReservationShouldBeFound("period.equals=" + DEFAULT_PERIOD);
+        // Get all the reservationList where status equals to DEFAULT_STATUS
+        defaultReservationShouldBeFound("status.equals=" + DEFAULT_STATUS);
 
-        // Get all the reservationList where period equals to UPDATED_PERIOD
-        defaultReservationShouldNotBeFound("period.equals=" + UPDATED_PERIOD);
+        // Get all the reservationList where status equals to UPDATED_STATUS
+        defaultReservationShouldNotBeFound("status.equals=" + UPDATED_STATUS);
     }
 
     @Test
     @Transactional
-    public void getAllReservationsByPeriodIsNotEqualToSomething() throws Exception {
+    public void getAllReservationsByStatusIsNotEqualToSomething() throws Exception {
         // Initialize the database
         reservationRepository.saveAndFlush(reservation);
 
-        // Get all the reservationList where period not equals to DEFAULT_PERIOD
-        defaultReservationShouldNotBeFound("period.notEquals=" + DEFAULT_PERIOD);
+        // Get all the reservationList where status not equals to DEFAULT_STATUS
+        defaultReservationShouldNotBeFound("status.notEquals=" + DEFAULT_STATUS);
 
-        // Get all the reservationList where period not equals to UPDATED_PERIOD
-        defaultReservationShouldBeFound("period.notEquals=" + UPDATED_PERIOD);
+        // Get all the reservationList where status not equals to UPDATED_STATUS
+        defaultReservationShouldBeFound("status.notEquals=" + UPDATED_STATUS);
     }
 
     @Test
     @Transactional
-    public void getAllReservationsByPeriodIsInShouldWork() throws Exception {
+    public void getAllReservationsByStatusIsInShouldWork() throws Exception {
         // Initialize the database
         reservationRepository.saveAndFlush(reservation);
 
-        // Get all the reservationList where period in DEFAULT_PERIOD or UPDATED_PERIOD
-        defaultReservationShouldBeFound("period.in=" + DEFAULT_PERIOD + "," + UPDATED_PERIOD);
+        // Get all the reservationList where status in DEFAULT_STATUS or UPDATED_STATUS
+        defaultReservationShouldBeFound("status.in=" + DEFAULT_STATUS + "," + UPDATED_STATUS);
 
-        // Get all the reservationList where period equals to UPDATED_PERIOD
-        defaultReservationShouldNotBeFound("period.in=" + UPDATED_PERIOD);
+        // Get all the reservationList where status equals to UPDATED_STATUS
+        defaultReservationShouldNotBeFound("status.in=" + UPDATED_STATUS);
     }
 
     @Test
     @Transactional
-    public void getAllReservationsByPeriodIsNullOrNotNull() throws Exception {
+    public void getAllReservationsByStatusIsNullOrNotNull() throws Exception {
         // Initialize the database
         reservationRepository.saveAndFlush(reservation);
 
-        // Get all the reservationList where period is not null
-        defaultReservationShouldBeFound("period.specified=true");
+        // Get all the reservationList where status is not null
+        defaultReservationShouldBeFound("status.specified=true");
 
-        // Get all the reservationList where period is null
-        defaultReservationShouldNotBeFound("period.specified=false");
+        // Get all the reservationList where status is null
+        defaultReservationShouldNotBeFound("status.specified=false");
     }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByPeriodIsGreaterThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where period is greater than or equal to DEFAULT_PERIOD
-        defaultReservationShouldBeFound("period.greaterThanOrEqual=" + DEFAULT_PERIOD);
-
-        // Get all the reservationList where period is greater than or equal to UPDATED_PERIOD
-        defaultReservationShouldNotBeFound("period.greaterThanOrEqual=" + UPDATED_PERIOD);
-    }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByPeriodIsLessThanOrEqualToSomething() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where period is less than or equal to DEFAULT_PERIOD
-        defaultReservationShouldBeFound("period.lessThanOrEqual=" + DEFAULT_PERIOD);
-
-        // Get all the reservationList where period is less than or equal to SMALLER_PERIOD
-        defaultReservationShouldNotBeFound("period.lessThanOrEqual=" + SMALLER_PERIOD);
-    }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByPeriodIsLessThanSomething() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where period is less than DEFAULT_PERIOD
-        defaultReservationShouldNotBeFound("period.lessThan=" + DEFAULT_PERIOD);
-
-        // Get all the reservationList where period is less than UPDATED_PERIOD
-        defaultReservationShouldBeFound("period.lessThan=" + UPDATED_PERIOD);
-    }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByPeriodIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where period is greater than DEFAULT_PERIOD
-        defaultReservationShouldNotBeFound("period.greaterThan=" + DEFAULT_PERIOD);
-
-        // Get all the reservationList where period is greater than SMALLER_PERIOD
-        defaultReservationShouldBeFound("period.greaterThan=" + SMALLER_PERIOD);
-    }
-
 
     @Test
     @Transactional
@@ -465,6 +421,111 @@ public class ReservationResourceIT {
 
     @Test
     @Transactional
+    public void getAllReservationsByFeesIsEqualToSomething() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where fees equals to DEFAULT_FEES
+        defaultReservationShouldBeFound("fees.equals=" + DEFAULT_FEES);
+
+        // Get all the reservationList where fees equals to UPDATED_FEES
+        defaultReservationShouldNotBeFound("fees.equals=" + UPDATED_FEES);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByFeesIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where fees not equals to DEFAULT_FEES
+        defaultReservationShouldNotBeFound("fees.notEquals=" + DEFAULT_FEES);
+
+        // Get all the reservationList where fees not equals to UPDATED_FEES
+        defaultReservationShouldBeFound("fees.notEquals=" + UPDATED_FEES);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByFeesIsInShouldWork() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where fees in DEFAULT_FEES or UPDATED_FEES
+        defaultReservationShouldBeFound("fees.in=" + DEFAULT_FEES + "," + UPDATED_FEES);
+
+        // Get all the reservationList where fees equals to UPDATED_FEES
+        defaultReservationShouldNotBeFound("fees.in=" + UPDATED_FEES);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByFeesIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where fees is not null
+        defaultReservationShouldBeFound("fees.specified=true");
+
+        // Get all the reservationList where fees is null
+        defaultReservationShouldNotBeFound("fees.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByFeesIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where fees is greater than or equal to DEFAULT_FEES
+        defaultReservationShouldBeFound("fees.greaterThanOrEqual=" + DEFAULT_FEES);
+
+        // Get all the reservationList where fees is greater than or equal to UPDATED_FEES
+        defaultReservationShouldNotBeFound("fees.greaterThanOrEqual=" + UPDATED_FEES);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByFeesIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where fees is less than or equal to DEFAULT_FEES
+        defaultReservationShouldBeFound("fees.lessThanOrEqual=" + DEFAULT_FEES);
+
+        // Get all the reservationList where fees is less than or equal to SMALLER_FEES
+        defaultReservationShouldNotBeFound("fees.lessThanOrEqual=" + SMALLER_FEES);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByFeesIsLessThanSomething() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where fees is less than DEFAULT_FEES
+        defaultReservationShouldNotBeFound("fees.lessThan=" + DEFAULT_FEES);
+
+        // Get all the reservationList where fees is less than UPDATED_FEES
+        defaultReservationShouldBeFound("fees.lessThan=" + UPDATED_FEES);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByFeesIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where fees is greater than DEFAULT_FEES
+        defaultReservationShouldNotBeFound("fees.greaterThan=" + DEFAULT_FEES);
+
+        // Get all the reservationList where fees is greater than SMALLER_FEES
+        defaultReservationShouldBeFound("fees.greaterThan=" + SMALLER_FEES);
+    }
+
+
+    @Test
+    @Transactional
     public void getAllReservationsByUserIsEqualToSomething() throws Exception {
         // Initialize the database
         reservationRepository.saveAndFlush(reservation);
@@ -511,9 +572,10 @@ public class ReservationResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reservation.getId().intValue())))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
-            .andExpect(jsonPath("$.[*].period").value(hasItem(DEFAULT_PERIOD)))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].startDate").value(hasItem(DEFAULT_START_DATE.toString())))
-            .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())));
+            .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())))
+            .andExpect(jsonPath("$.[*].fees").value(hasItem(DEFAULT_FEES.doubleValue())));
 
         // Check, that the count call also returns 1
         restReservationMockMvc.perform(get("/api/reservations/count?sort=id,desc&" + filter))
@@ -561,9 +623,10 @@ public class ReservationResourceIT {
         em.detach(updatedReservation);
         updatedReservation
             .type(UPDATED_TYPE)
-            .period(UPDATED_PERIOD)
+            .status(UPDATED_STATUS)
             .startDate(UPDATED_START_DATE)
-            .endDate(UPDATED_END_DATE);
+            .endDate(UPDATED_END_DATE)
+            .fees(UPDATED_FEES);
         ReservationDTO reservationDTO = reservationMapper.toDto(updatedReservation);
 
         restReservationMockMvc.perform(put("/api/reservations")
@@ -576,9 +639,10 @@ public class ReservationResourceIT {
         assertThat(reservationList).hasSize(databaseSizeBeforeUpdate);
         Reservation testReservation = reservationList.get(reservationList.size() - 1);
         assertThat(testReservation.getType()).isEqualTo(UPDATED_TYPE);
-        assertThat(testReservation.getPeriod()).isEqualTo(UPDATED_PERIOD);
+        assertThat(testReservation.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testReservation.getStartDate()).isEqualTo(UPDATED_START_DATE);
         assertThat(testReservation.getEndDate()).isEqualTo(UPDATED_END_DATE);
+        assertThat(testReservation.getFees()).isEqualTo(UPDATED_FEES);
     }
 
     @Test

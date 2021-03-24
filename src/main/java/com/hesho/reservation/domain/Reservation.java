@@ -11,6 +11,8 @@ import java.time.Instant;
 
 import com.hesho.reservation.domain.enumeration.ReservationType;
 
+import com.hesho.reservation.domain.enumeration.ReservationStatus;
+
 /**
  * A Reservation.
  */
@@ -30,14 +32,18 @@ public class Reservation implements Serializable {
     @Column(name = "type")
     private ReservationType type;
 
-    @Column(name = "period")
-    private Integer period;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private ReservationStatus status;
 
     @Column(name = "start_date")
     private Instant startDate;
 
     @Column(name = "end_date")
     private Instant endDate;
+
+    @Column(name = "fees")
+    private Double fees;
 
     @ManyToOne
     @JsonIgnoreProperties(value = "reservations", allowSetters = true)
@@ -69,17 +75,17 @@ public class Reservation implements Serializable {
         this.type = type;
     }
 
-    public Integer getPeriod() {
-        return period;
+    public ReservationStatus getStatus() {
+        return status;
     }
 
-    public Reservation period(Integer period) {
-        this.period = period;
+    public Reservation status(ReservationStatus status) {
+        this.status = status;
         return this;
     }
 
-    public void setPeriod(Integer period) {
-        this.period = period;
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
     }
 
     public Instant getStartDate() {
@@ -106,6 +112,19 @@ public class Reservation implements Serializable {
 
     public void setEndDate(Instant endDate) {
         this.endDate = endDate;
+    }
+
+    public Double getFees() {
+        return fees;
+    }
+
+    public Reservation fees(Double fees) {
+        this.fees = fees;
+        return this;
+    }
+
+    public void setFees(Double fees) {
+        this.fees = fees;
     }
 
     public User getUser() {
@@ -157,9 +176,10 @@ public class Reservation implements Serializable {
         return "Reservation{" +
             "id=" + getId() +
             ", type='" + getType() + "'" +
-            ", period=" + getPeriod() +
+            ", status='" + getStatus() + "'" +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
+            ", fees=" + getFees() +
             "}";
     }
 }

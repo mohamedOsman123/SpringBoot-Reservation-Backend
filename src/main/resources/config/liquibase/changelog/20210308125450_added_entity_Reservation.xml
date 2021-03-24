@@ -18,13 +18,16 @@
             <column name="type" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="period" type="integer">
+            <column name="status" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
             <column name="start_date" type="datetime">
                 <constraints nullable="true" />
             </column>
             <column name="end_date" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="fees" type="double">
                 <constraints nullable="true" />
             </column>
             <column name="user_id" type="bigint">
@@ -59,9 +62,10 @@
                   tableName="reservation">
             <column name="id" type="numeric"/>
             <column name="type" type="string"/>
-            <column name="period" type="numeric"/>
+            <column name="status" type="string"/>
             <column name="start_date" type="datetime"/>
             <column name="end_date" type="datetime"/>
+            <column name="fees" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

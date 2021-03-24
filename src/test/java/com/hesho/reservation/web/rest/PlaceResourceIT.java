@@ -47,6 +47,10 @@ public class PlaceResourceIT {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
+    private static final Double DEFAULT_PRICE = 1D;
+    private static final Double UPDATED_PRICE = 2D;
+    private static final Double SMALLER_PRICE = 1D - 1D;
+
     @Autowired
     private PlaceRepository placeRepository;
 
@@ -77,7 +81,8 @@ public class PlaceResourceIT {
         Place place = new Place()
             .name(DEFAULT_NAME)
             .specification(DEFAULT_SPECIFICATION)
-            .description(DEFAULT_DESCRIPTION);
+            .description(DEFAULT_DESCRIPTION)
+            .price(DEFAULT_PRICE);
         return place;
     }
     /**
@@ -90,7 +95,8 @@ public class PlaceResourceIT {
         Place place = new Place()
             .name(UPDATED_NAME)
             .specification(UPDATED_SPECIFICATION)
-            .description(UPDATED_DESCRIPTION);
+            .description(UPDATED_DESCRIPTION)
+            .price(UPDATED_PRICE);
         return place;
     }
 
@@ -117,6 +123,7 @@ public class PlaceResourceIT {
         assertThat(testPlace.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testPlace.getSpecification()).isEqualTo(DEFAULT_SPECIFICATION);
         assertThat(testPlace.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testPlace.getPrice()).isEqualTo(DEFAULT_PRICE);
     }
 
     @Test
@@ -193,7 +200,8 @@ public class PlaceResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(place.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].specification").value(hasItem(DEFAULT_SPECIFICATION)))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)));
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.doubleValue())));
     }
     
     @Test
@@ -209,7 +217,8 @@ public class PlaceResourceIT {
             .andExpect(jsonPath("$.id").value(place.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.specification").value(DEFAULT_SPECIFICATION))
-            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION));
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
+            .andExpect(jsonPath("$.price").value(DEFAULT_PRICE.doubleValue()));
     }
 
 
@@ -468,6 +477,111 @@ public class PlaceResourceIT {
 
     @Test
     @Transactional
+    public void getAllPlacesByPriceIsEqualToSomething() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get all the placeList where price equals to DEFAULT_PRICE
+        defaultPlaceShouldBeFound("price.equals=" + DEFAULT_PRICE);
+
+        // Get all the placeList where price equals to UPDATED_PRICE
+        defaultPlaceShouldNotBeFound("price.equals=" + UPDATED_PRICE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlacesByPriceIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get all the placeList where price not equals to DEFAULT_PRICE
+        defaultPlaceShouldNotBeFound("price.notEquals=" + DEFAULT_PRICE);
+
+        // Get all the placeList where price not equals to UPDATED_PRICE
+        defaultPlaceShouldBeFound("price.notEquals=" + UPDATED_PRICE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlacesByPriceIsInShouldWork() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get all the placeList where price in DEFAULT_PRICE or UPDATED_PRICE
+        defaultPlaceShouldBeFound("price.in=" + DEFAULT_PRICE + "," + UPDATED_PRICE);
+
+        // Get all the placeList where price equals to UPDATED_PRICE
+        defaultPlaceShouldNotBeFound("price.in=" + UPDATED_PRICE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlacesByPriceIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get all the placeList where price is not null
+        defaultPlaceShouldBeFound("price.specified=true");
+
+        // Get all the placeList where price is null
+        defaultPlaceShouldNotBeFound("price.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlacesByPriceIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get all the placeList where price is greater than or equal to DEFAULT_PRICE
+        defaultPlaceShouldBeFound("price.greaterThanOrEqual=" + DEFAULT_PRICE);
+
+        // Get all the placeList where price is greater than or equal to UPDATED_PRICE
+        defaultPlaceShouldNotBeFound("price.greaterThanOrEqual=" + UPDATED_PRICE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlacesByPriceIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get all the placeList where price is less than or equal to DEFAULT_PRICE
+        defaultPlaceShouldBeFound("price.lessThanOrEqual=" + DEFAULT_PRICE);
+
+        // Get all the placeList where price is less than or equal to SMALLER_PRICE
+        defaultPlaceShouldNotBeFound("price.lessThanOrEqual=" + SMALLER_PRICE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlacesByPriceIsLessThanSomething() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get all the placeList where price is less than DEFAULT_PRICE
+        defaultPlaceShouldNotBeFound("price.lessThan=" + DEFAULT_PRICE);
+
+        // Get all the placeList where price is less than UPDATED_PRICE
+        defaultPlaceShouldBeFound("price.lessThan=" + UPDATED_PRICE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlacesByPriceIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get all the placeList where price is greater than DEFAULT_PRICE
+        defaultPlaceShouldNotBeFound("price.greaterThan=" + DEFAULT_PRICE);
+
+        // Get all the placeList where price is greater than SMALLER_PRICE
+        defaultPlaceShouldBeFound("price.greaterThan=" + SMALLER_PRICE);
+    }
+
+
+    @Test
+    @Transactional
     public void getAllPlacesByLocationIsEqualToSomething() throws Exception {
         // Initialize the database
         placeRepository.saveAndFlush(place);
@@ -555,7 +669,8 @@ public class PlaceResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(place.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].specification").value(hasItem(DEFAULT_SPECIFICATION)))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)));
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.doubleValue())));
 
         // Check, that the count call also returns 1
         restPlaceMockMvc.perform(get("/api/places/count?sort=id,desc&" + filter))
@@ -604,7 +719,8 @@ public class PlaceResourceIT {
         updatedPlace
             .name(UPDATED_NAME)
             .specification(UPDATED_SPECIFICATION)
-            .description(UPDATED_DESCRIPTION);
+            .description(UPDATED_DESCRIPTION)
+            .price(UPDATED_PRICE);
         PlaceDTO placeDTO = placeMapper.toDto(updatedPlace);
 
         restPlaceMockMvc.perform(put("/api/places")
@@ -619,6 +735,7 @@ public class PlaceResourceIT {
         assertThat(testPlace.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testPlace.getSpecification()).isEqualTo(UPDATED_SPECIFICATION);
         assertThat(testPlace.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testPlace.getPrice()).isEqualTo(UPDATED_PRICE);
     }
 
     @Test

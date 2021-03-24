@@ -44,6 +44,14 @@ public interface ImageService {
     /**
      * Get the "id" image By Place.
      *
+     * @param imageName the id of the entity.
+     * @return the entity.
+     */
+    public UrlResource findOneByImageUrl(String imageName);
+
+    /**
+     * Get the "id" image By Place.
+     *
      * @param id the id of the entity.
      * @return the entity.
      */
@@ -59,6 +67,9 @@ public interface ImageService {
 
 
    public ImageDTO saveImagesForPlace(MultipartFile image, Long placeId);
+
+
+    public ImageDTO saveImagesForCategory(MultipartFile image, Long categoryId);
 
     /**
      * Delete the "id" image.

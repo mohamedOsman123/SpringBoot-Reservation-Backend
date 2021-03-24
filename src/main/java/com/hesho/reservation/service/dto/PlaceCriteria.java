@@ -32,6 +32,8 @@ public class PlaceCriteria implements Serializable, Criteria {
 
     private StringFilter description;
 
+    private DoubleFilter price;
+
     private LongFilter locationId;
 
     private LongFilter imagesId;
@@ -48,6 +50,7 @@ public class PlaceCriteria implements Serializable, Criteria {
         this.name = other.name == null ? null : other.name.copy();
         this.specification = other.specification == null ? null : other.specification.copy();
         this.description = other.description == null ? null : other.description.copy();
+        this.price = other.price == null ? null : other.price.copy();
         this.locationId = other.locationId == null ? null : other.locationId.copy();
         this.imagesId = other.imagesId == null ? null : other.imagesId.copy();
         this.reservationsId = other.reservationsId == null ? null : other.reservationsId.copy();
@@ -89,6 +92,14 @@ public class PlaceCriteria implements Serializable, Criteria {
 
     public void setDescription(StringFilter description) {
         this.description = description;
+    }
+
+    public DoubleFilter getPrice() {
+        return price;
+    }
+
+    public void setPrice(DoubleFilter price) {
+        this.price = price;
     }
 
     public LongFilter getLocationId() {
@@ -138,6 +149,7 @@ public class PlaceCriteria implements Serializable, Criteria {
             Objects.equals(name, that.name) &&
             Objects.equals(specification, that.specification) &&
             Objects.equals(description, that.description) &&
+            Objects.equals(price, that.price) &&
             Objects.equals(locationId, that.locationId) &&
             Objects.equals(imagesId, that.imagesId) &&
             Objects.equals(reservationsId, that.reservationsId) &&
@@ -151,6 +163,7 @@ public class PlaceCriteria implements Serializable, Criteria {
         name,
         specification,
         description,
+        price,
         locationId,
         imagesId,
         reservationsId,
@@ -166,6 +179,7 @@ public class PlaceCriteria implements Serializable, Criteria {
                 (name != null ? "name=" + name + ", " : "") +
                 (specification != null ? "specification=" + specification + ", " : "") +
                 (description != null ? "description=" + description + ", " : "") +
+                (price != null ? "price=" + price + ", " : "") +
                 (locationId != null ? "locationId=" + locationId + ", " : "") +
                 (imagesId != null ? "imagesId=" + imagesId + ", " : "") +
                 (reservationsId != null ? "reservationsId=" + reservationsId + ", " : "") +

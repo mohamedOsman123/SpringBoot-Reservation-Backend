@@ -24,6 +24,9 @@
             <column name="description" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="price" type="double">
+                <constraints nullable="true" />
+            </column>
             <column name="location_id" type="bigint">
                 <constraints unique="true" nullable="true" uniqueConstraintName="ux_place_location_id" />
             </column>
@@ -56,6 +59,7 @@
             <column name="name" type="string"/>
             <column name="specification" type="string"/>
             <column name="description" type="string"/>
+            <column name="price" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

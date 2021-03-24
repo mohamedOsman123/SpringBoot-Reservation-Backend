@@ -94,14 +94,17 @@ public class ReservationQueryService extends QueryService<Reservation> {
             if (criteria.getType() != null) {
                 specification = specification.and(buildSpecification(criteria.getType(), Reservation_.type));
             }
-            if (criteria.getPeriod() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getPeriod(), Reservation_.period));
+            if (criteria.getStatus() != null) {
+                specification = specification.and(buildSpecification(criteria.getStatus(), Reservation_.status));
             }
             if (criteria.getStartDate() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getStartDate(), Reservation_.startDate));
             }
             if (criteria.getEndDate() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getEndDate(), Reservation_.endDate));
+            }
+            if (criteria.getFees() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getFees(), Reservation_.fees));
             }
             if (criteria.getUserId() != null) {
                 specification = specification.and(buildSpecification(criteria.getUserId(),

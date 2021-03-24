@@ -3,21 +3,25 @@ package com.hesho.reservation.service.dto;
 import java.time.Instant;
 import java.io.Serializable;
 import com.hesho.reservation.domain.enumeration.ReservationType;
+import com.hesho.reservation.domain.enumeration.ReservationStatus;
 
 /**
  * A DTO for the {@link com.hesho.reservation.domain.Reservation} entity.
  */
 public class ReservationDTO implements Serializable {
-
+    
     private Long id;
 
     private ReservationType type;
 
-    private Integer period;
+    private ReservationStatus status;
 
     private Instant startDate;
 
     private Instant endDate;
+
+    private Double fees;
+
 
     private Long userId;
 
@@ -26,7 +30,7 @@ public class ReservationDTO implements Serializable {
     private Long placeId;
 
     private String placeName;
-
+    
     public Long getId() {
         return id;
     }
@@ -43,12 +47,12 @@ public class ReservationDTO implements Serializable {
         this.type = type;
     }
 
-    public Integer getPeriod() {
-        return period;
+    public ReservationStatus getStatus() {
+        return status;
     }
 
-    public void setPeriod(Integer period) {
-        this.period = period;
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
     }
 
     public Instant getStartDate() {
@@ -65,6 +69,14 @@ public class ReservationDTO implements Serializable {
 
     public void setEndDate(Instant endDate) {
         this.endDate = endDate;
+    }
+
+    public Double getFees() {
+        return fees;
+    }
+
+    public void setFees(Double fees) {
+        this.fees = fees;
     }
 
     public Long getUserId() {
@@ -122,9 +134,10 @@ public class ReservationDTO implements Serializable {
         return "ReservationDTO{" +
             "id=" + getId() +
             ", type='" + getType() + "'" +
-            ", period=" + getPeriod() +
+            ", status='" + getStatus() + "'" +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
+            ", fees=" + getFees() +
             ", userId=" + getUserId() +
             ", userLogin='" + getUserLogin() + "'" +
             ", placeId=" + getPlaceId() +

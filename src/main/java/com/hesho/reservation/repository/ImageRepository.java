@@ -18,4 +18,6 @@ public interface ImageRepository extends JpaRepository<Image, Long>, JpaSpecific
     Optional<Image> findOneByPlaceIdAndMainIsTrue(Long placeId);
 
     Optional<Image> findOneByCategoryIdAndMainIsTrue(Long categoryId);
+
+    Optional<Image> findOneByImageUrl(String imageUrl);
 }

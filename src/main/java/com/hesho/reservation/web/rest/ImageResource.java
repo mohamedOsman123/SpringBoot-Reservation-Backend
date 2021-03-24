@@ -96,6 +96,21 @@ public class ImageResource {
     }
 
     /**
+     * {@code POST  /images} : Create a new image.
+     *
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new imageDTO, or with status {@code 400 (Bad Request)} if the image has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/images/category/{categoryId}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<ImageDTO> addImageForCategory(@Valid @RequestBody MultipartFile  image,@PathVariable Long categoryId) throws URISyntaxException {
+
+        log.debug("REST request to save Place images");
+        ImageDTO result = imageService.saveImagesForCategory(image,categoryId);
+        return ResponseEntity.ok().body(result);
+    }
+
+    /**
      * {@code PUT  /images} : Updates an existing image.
      *
      * @param imageDTO the imageDTO to update.
@@ -156,6 +171,16 @@ public class ImageResource {
         log.debug("REST request to get Image : {}", id);
         Optional<ImageDTO> imageDTO = imageService.findOne(id);
         return ResponseUtil.wrapOrNotFound(imageDTO);
+    }
+
+    @GetMapping(value = "/images/load/{imageName}",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<?> getImageByImageName(@PathVariable String imageName) {
+        log.debug("REST request to get Main Image By imageName : {}", imageName);
+        try {
+            return ResponseEntity.ok(imageService.findOneByImageUrl(imageName));
+        } catch (StorageException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping(value = "/images/place/{placeId}",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)

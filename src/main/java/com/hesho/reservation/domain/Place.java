@@ -37,6 +37,9 @@ public class Place implements Serializable {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "price")
+    private Double price;
+
     @OneToOne
     @JoinColumn(unique = true)
     private Location location;
@@ -99,6 +102,19 @@ public class Place implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public Place price(Double price) {
+        this.price = price;
+        return this;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public Location getLocation() {
@@ -202,6 +218,7 @@ public class Place implements Serializable {
             ", name='" + getName() + "'" +
             ", specification='" + getSpecification() + "'" +
             ", description='" + getDescription() + "'" +
+            ", price=" + getPrice() +
             "}";
     }
 }

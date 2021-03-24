@@ -1,5 +1,7 @@
 package com.hesho.reservation.service.impl;
+import com.hesho.reservation.domain.Category;
 import com.hesho.reservation.domain.Place;
+import com.hesho.reservation.repository.CategoryRepository;
 import com.hesho.reservation.repository.PlaceRepository;
 import com.hesho.reservation.security.ImageException;
 import com.hesho.reservation.security.StorageException;
@@ -50,6 +52,8 @@ public class ImageServiceImpl implements ImageService {
 
     private final ImageMapper imageMapper;
 
+    private final CategoryRepository categoryRepository;
+
     @Autowired
     private Environment env;
 
@@ -63,10 +67,11 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-    public ImageServiceImpl(ImageRepository imageRepository, ImageMapper imageMapper,PlaceRepository placeRepository) {
+    public ImageServiceImpl(ImageRepository imageRepository, ImageMapper imageMapper,PlaceRepository placeRepository,CategoryRepository categoryRepository) {
         this.imageRepository = imageRepository;
         this.imageMapper = imageMapper;
         this.placeRepository=placeRepository;
+        this.categoryRepository=categoryRepository;
     }
 
     @Override
@@ -110,7 +115,38 @@ public class ImageServiceImpl implements ImageService {
        }
     }
 
-
+    @Override
+    public ImageDTO saveImagesForCategory(MultipartFile image, Long categoryId){
+        // find place by placeId
+        Optional<Category> category=categoryRepository.findById(categoryId);
+        if (category.isPresent()) {
+            Category categoryEntity=category.get();
+            // create new image entity to save images for place
+            Image imageEntity=new Image();
+            String fileName = StringUtils.cleanPath(RandomUtil.generateRandomAlphanumericString() + "." + FilenameUtils.getExtension(image.getOriginalFilename()));
+            try {
+                if (fileName.isEmpty()) {
+                    throw new StorageException("Failed to store empty file " + fileName);
+                }
+                if (fileName.contains("..")) {
+                    throw new StorageException("Cannot store file with relative path outside current directory " + fileName);
+                }
+                try (InputStream inputStream = image.getInputStream()) {
+                    Files.copy(inputStream, Paths.get(env.getProperty("image.place.dir")).resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                    imageEntity.setImageUrl(fileName);
+                    imageEntity.setCategory(categoryEntity);
+                    imageRepository.save(imageEntity);
+                    return imageMapper.toDto(imageEntity);
+                }
+            }
+            catch(IOException e){
+                throw new StorageException("Failed to store file " + fileName, e);
+            }
+        }
+        else {
+            throw new StorageException("Could not read file: " + image);
+        }
+    }
     @Override
     @Transactional(readOnly = true)
     public Page<ImageDTO> findAll(Pageable pageable) {
@@ -125,6 +161,32 @@ public class ImageServiceImpl implements ImageService {
         log.debug("Request to get Image : {}", id);
         return imageRepository.findById(id)
             .map(imageMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UrlResource findOneByImageUrl(String imageName){
+        log.debug("Request to get Image : {}", imageName);
+        String fileName=null;
+        try {
+            Optional<Image> image = imageRepository.findOneByImageUrl(imageName);
+            if (image.isPresent()) {
+                Image imageEntity = image.get();
+                fileName=imageEntity.getImageUrl();
+                Path file = Paths.get(env.getProperty("image.place.dir")).resolve(fileName);
+                UrlResource resource = new UrlResource(file.toUri());
+                if (resource.exists() || resource.isReadable()) {
+                    return resource;
+                } else {
+                    throw new StorageException("Could not read file: " + fileName);
+                }
+            }
+            else {
+                throw new ImageException("No Image Found");
+            }
+        } catch (MalformedURLException e) {
+            throw new ImageException(e);
+        }
     }
 
     @Override
