@@ -17,6 +17,7 @@ entity Place {
 	name String required
     specification String required
     description String
+    price Double
 
 }
 
@@ -30,11 +31,16 @@ enum ReservationType {
 	DAILY, WEEKLY, MONTHLY
 }
 
+enum ReservationStatus {
+	PENDING, APPROVED, PAID
+}
+
 entity Reservation {
     type ReservationType
-    period Integer
+    status ReservationStatus
     startDate Instant
     endDate Instant
+    fees Double
 }
 
 
