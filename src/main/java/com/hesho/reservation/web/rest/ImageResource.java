@@ -88,7 +88,7 @@ public class ImageResource {
      */
     @PostMapping("/images/place/{placeId}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<ImageDTO> addImageForPlace(@Valid @RequestBody MultipartFile  image,@PathVariable Long placeId) throws URISyntaxException {
+    public ResponseEntity<ImageDTO> addImageForPlace(@RequestParam("data") MultipartFile  image,@PathVariable Long placeId) throws URISyntaxException {
 
         log.debug("REST request to save Place images");
        ImageDTO result = imageService.saveImagesForPlace(image,placeId);
@@ -103,9 +103,9 @@ public class ImageResource {
      */
     @PostMapping("/images/category/{categoryId}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<ImageDTO> addImageForCategory(@Valid @RequestBody MultipartFile  image,@PathVariable Long categoryId) throws URISyntaxException {
+    public ResponseEntity<ImageDTO> addImageForCategory(@RequestParam("data") MultipartFile  image,@PathVariable Long categoryId) throws URISyntaxException {
 
-        log.debug("REST request to save Place images");
+        log.debug("REST request to save category images");
         ImageDTO result = imageService.saveImagesForCategory(image,categoryId);
         return ResponseEntity.ok().body(result);
     }
