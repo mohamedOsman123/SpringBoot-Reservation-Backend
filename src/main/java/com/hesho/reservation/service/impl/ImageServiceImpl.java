@@ -225,7 +225,7 @@ public class ImageServiceImpl implements ImageService {
             if (image.isPresent()) {
                 Image imageEntity = image.get();
                 fileName=imageEntity.getImageUrl();
-                Path file = Paths.get(env.getProperty("product.image.dir")).resolve(fileName);
+                Path file = Paths.get(env.getProperty("image.category.dir")).resolve(fileName);
                 UrlResource resource = new UrlResource(file.toUri());
                 if (resource.exists() || resource.isReadable()) {
                     return resource;
