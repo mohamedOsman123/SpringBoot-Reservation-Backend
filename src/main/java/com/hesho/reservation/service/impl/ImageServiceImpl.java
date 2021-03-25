@@ -176,7 +176,13 @@ public class ImageServiceImpl implements ImageService {
                 if (resource.exists() || resource.isReadable()) {
                     return resource;
                 } else {
-                    throw new StorageException("Could not read file: " + fileName);
+                    file = Paths.get(env.getProperty("image.category.dir")).resolve(fileName);
+                    resource = new UrlResource(file.toUri());
+                    if (resource.exists() || resource.isReadable()) {
+                        return resource;
+                    } else {
+                        throw new StorageException("Could not read file: " + fileName);
+                    }
                 }
             }
             else {
