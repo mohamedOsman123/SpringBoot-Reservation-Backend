@@ -1,5 +1,6 @@
 package com.hesho.reservation.service.impl;
 
+import com.hesho.reservation.domain.enumeration.ReservationStatus;
 import com.hesho.reservation.service.ReservationService;
 import com.hesho.reservation.domain.Reservation;
 import com.hesho.reservation.repository.ReservationRepository;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,9 +39,25 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationDTO save(ReservationDTO reservationDTO) {
         log.debug("Request to save Reservation : {}", reservationDTO);
         Reservation reservation = reservationMapper.toEntity(reservationDTO);
+        reservation.setStatus(ReservationStatus.PENDING);
         reservation = reservationRepository.save(reservation);
         return reservationMapper.toDto(reservation);
     }
+
+    @Override
+    public ReservationDTO updateStatus(Long id,ReservationStatus status) {
+        log.debug("Request to update Reservation Status: {}", id);
+        Reservation reservation = reservationRepository.getOne(id);
+        if (reservation!=null) {
+            reservation.setStatus(status);
+            reservation = reservationRepository.save(reservation);
+            return reservationMapper.toDto(reservation);
+        }
+        else{
+            throw new UsernameNotFoundException(id.toString());
+        }
+    }
+
 
     @Override
     @Transactional(readOnly = true)

@@ -13,7 +13,6 @@ import com.hesho.reservation.service.dto.PlaceDTO;
 import com.hesho.reservation.service.mapper.ImageMapper;
 import io.github.jhipster.security.RandomUtil;
 import liquibase.pro.packaged.I;
-import liquibase.util.file.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +35,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Service Implementation for managing {@link Image}.
@@ -88,7 +88,6 @@ public class ImageServiceImpl implements ImageService {
        Optional<Place> place=placeRepository.findById(placeId);
        if (place.isPresent()) {
            Place placeEntity=place.get();
-                   // create new image entity to save images for place
                    Image imageEntity=new Image();
                    String fileName = StringUtils.cleanPath(RandomUtil.generateRandomAlphanumericString() + "." + FilenameUtils.getExtension(image.getOriginalFilename()));
                    try {
@@ -114,7 +113,6 @@ public class ImageServiceImpl implements ImageService {
            throw new StorageException("Could not read file: " + image);
        }
     }
-
     @Override
     public ImageDTO saveImagesForCategory(MultipartFile image, Long categoryId){
         // find place by placeId
@@ -132,7 +130,7 @@ public class ImageServiceImpl implements ImageService {
                     throw new StorageException("Cannot store file with relative path outside current directory " + fileName);
                 }
                 try (InputStream inputStream = image.getInputStream()) {
-                    Files.copy(inputStream, Paths.get(env.getProperty("image.place.dir")).resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(inputStream, Paths.get(env.getProperty("image.category.dir")).resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
                     imageEntity.setImageUrl(fileName);
                     imageEntity.setCategory(categoryEntity);
                     imageRepository.save(imageEntity);

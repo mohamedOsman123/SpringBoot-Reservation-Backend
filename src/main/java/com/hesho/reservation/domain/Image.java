@@ -30,7 +30,7 @@ public class Image implements Serializable {
 
     @NotNull
     @Column(name = "main", nullable = false)
-    private Boolean main;
+    private Boolean main=false;
 
     @ManyToOne
     @JsonIgnoreProperties(value = "images", allowSetters = true)

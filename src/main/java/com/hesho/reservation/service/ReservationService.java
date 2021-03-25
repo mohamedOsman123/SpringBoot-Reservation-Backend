@@ -1,5 +1,6 @@
 package com.hesho.reservation.service;
 
+import com.hesho.reservation.domain.enumeration.ReservationStatus;
 import com.hesho.reservation.service.dto.ReservationDTO;
 
 import org.springframework.data.domain.Page;
@@ -19,6 +20,9 @@ public interface ReservationService {
      * @return the persisted entity.
      */
     ReservationDTO save(ReservationDTO reservationDTO);
+
+
+    ReservationDTO updateStatus(Long id, ReservationStatus status);
 
     /**
      * Get all the reservations.

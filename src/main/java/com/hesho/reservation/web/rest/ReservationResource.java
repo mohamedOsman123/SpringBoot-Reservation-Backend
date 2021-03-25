@@ -1,11 +1,17 @@
 package com.hesho.reservation.web.rest;
 
+import com.hesho.reservation.domain.User;
+import com.hesho.reservation.domain.enumeration.ReservationStatus;
+import com.hesho.reservation.security.AuthoritiesConstants;
+import com.hesho.reservation.security.SecurityUtils;
 import com.hesho.reservation.service.ReservationService;
+import com.hesho.reservation.service.UserService;
 import com.hesho.reservation.web.rest.errors.BadRequestAlertException;
 import com.hesho.reservation.service.dto.ReservationDTO;
 import com.hesho.reservation.service.dto.ReservationCriteria;
 import com.hesho.reservation.service.ReservationQueryService;
 
+import io.github.jhipster.service.filter.LongFilter;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -16,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,9 +50,12 @@ public class ReservationResource {
 
     private final ReservationQueryService reservationQueryService;
 
-    public ReservationResource(ReservationService reservationService, ReservationQueryService reservationQueryService) {
+    private final UserService userService;
+
+    public ReservationResource(ReservationService reservationService, ReservationQueryService reservationQueryService,UserService userService) {
         this.reservationService = reservationService;
         this.reservationQueryService = reservationQueryService;
+        this.userService=userService;
     }
 
     /**
@@ -62,10 +72,9 @@ public class ReservationResource {
             throw new BadRequestAlertException("A new reservation cannot already have an ID", ENTITY_NAME, "idexists");
         }
         ReservationDTO result = reservationService.save(reservationDTO);
-        return ResponseEntity.created(new URI("/api/reservations/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        return ResponseEntity.ok().body(result);
     }
+
     /**
      * {@code PUT  /reservations} : Updates an existing reservation.
      *
@@ -82,30 +91,24 @@ public class ReservationResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         ReservationDTO result = reservationService.save(reservationDTO);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reservationDTO.getId().toString()))
-            .body(result);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
      * {@code PUT  /reservations} : Updates an existing status reservation.
      *
-     * @param reservationDTO the reservationDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated reservationDTO,
      * or with status {@code 400 (Bad Request)} if the reservationDTO is not valid,
      * or with status {@code 500 (Internal Server Error)} if the reservationDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/reservations/updateStatus")
-    public ResponseEntity<ReservationDTO> updateReservationStatus(@RequestBody ReservationDTO reservationDTO) throws URISyntaxException {
-        log.debug("REST request to update Reservation : {}", reservationDTO);
-        if (reservationDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        ReservationDTO result = reservationService.save(reservationDTO);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, reservationDTO.getId().toString()))
-            .body(result);
+    @PutMapping("/reservations/updateStatus/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<ReservationDTO> updateReservationStatus(@PathVariable Long id,@RequestBody ReservationStatus status) throws URISyntaxException {
+        log.debug("REST request to update Reservation Status: {}", id);
+
+        ReservationDTO result = reservationService.updateStatus(id,status);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
@@ -118,9 +121,9 @@ public class ReservationResource {
     @GetMapping("/reservations")
     public ResponseEntity<List<ReservationDTO>> getAllReservations(ReservationCriteria criteria, Pageable pageable) {
         log.debug("REST request to get Reservations by criteria: {}", criteria);
-        Page<ReservationDTO> page = reservationQueryService.findByCriteria(criteria, pageable);
+        Page<ReservationDTO> page = reservationQueryService.findByCriteria(limitToUserData(criteria), pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().body(page.getContent());
     }
 
     /**
@@ -132,9 +135,8 @@ public class ReservationResource {
     @GetMapping("/reservations/count")
     public ResponseEntity<Long> countReservations(ReservationCriteria criteria) {
         log.debug("REST request to count Reservations by criteria: {}", criteria);
-        return ResponseEntity.ok().body(reservationQueryService.countByCriteria(criteria));
+        return ResponseEntity.ok().body(reservationQueryService.countByCriteria(limitToUserData(criteria)));
     }
-
     /**
      * {@code GET  /reservations/:id} : get the "id" reservation.
      *
@@ -147,7 +149,6 @@ public class ReservationResource {
         Optional<ReservationDTO> reservationDTO = reservationService.findOne(id);
         return ResponseUtil.wrapOrNotFound(reservationDTO);
     }
-
     /**
      * {@code DELETE  /reservations/:id} : delete the "id" reservation.
      *
@@ -159,5 +160,18 @@ public class ReservationResource {
         log.debug("REST request to delete Reservation : {}", id);
         reservationService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+    }
+    private ReservationCriteria limitToUserData(ReservationCriteria criteria) {
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            Optional<User> user = userService.getUserWithAuthorities();
+            if (!user.isPresent()) {
+                throw new BadRequestAlertException("No User detected", ENTITY_NAME, "noUser");
+            }
+            Long userId = user.get().getId();
+            LongFilter longFilter = new LongFilter();
+            longFilter.setEquals(userId);
+            criteria.setUserId(longFilter);
+        }
+        return criteria;
     }
 }
