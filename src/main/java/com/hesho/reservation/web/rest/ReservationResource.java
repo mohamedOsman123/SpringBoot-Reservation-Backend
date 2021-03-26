@@ -123,7 +123,7 @@ public class ReservationResource {
         log.debug("REST request to get Reservations by criteria: {}", criteria);
         Page<ReservationDTO> page = reservationQueryService.findByCriteria(limitToUserData(criteria), pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
