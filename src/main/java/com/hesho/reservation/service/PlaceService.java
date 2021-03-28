@@ -1,5 +1,6 @@
 package com.hesho.reservation.service;
 
+import com.hesho.reservation.domain.Place;
 import com.hesho.reservation.service.dto.PlaceDTO;
 
 import org.springframework.data.domain.Page;
@@ -45,4 +46,6 @@ public interface PlaceService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    Optional<Place> findPlaceByImageId(Long imageId);
 }

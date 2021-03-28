@@ -71,6 +71,7 @@ public interface ImageService {
 
     public ImageDTO saveImagesForCategory(MultipartFile image, Long categoryId);
 
+    public ImageDTO setMainImagesForCategory(Long imageId,Long categoryId);
     /**
      * Delete the "id" image.
      *
@@ -78,4 +79,5 @@ public interface ImageService {
      */
     void delete(Long id);
 
+    ImageDTO setMainImagesForPlace(Long imageId, Long place);
 }

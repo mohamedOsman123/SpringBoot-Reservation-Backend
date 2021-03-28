@@ -1,6 +1,7 @@
 package com.hesho.reservation.web.rest;
 
 import com.google.cloud.storage.StorageException;
+import com.hesho.reservation.domain.Category;
 import com.hesho.reservation.domain.Place;
 import com.hesho.reservation.security.AuthoritiesConstants;
 import com.hesho.reservation.service.CategoryService;
@@ -52,10 +53,15 @@ public class ImageResource {
 
     private final ImageQueryService imageQueryService;
 
+    private final CategoryService categoryService;
 
-    public ImageResource(ImageService imageService, ImageQueryService imageQueryService) {
+    private final PlaceService placeService;
+
+    public ImageResource(ImageService imageService, ImageQueryService imageQueryService,CategoryService categoryService,PlaceService placeService) {
         this.imageService = imageService;
         this.imageQueryService = imageQueryService;
+        this.categoryService =categoryService;
+        this.placeService=placeService;
 
     }
 
@@ -107,6 +113,39 @@ public class ImageResource {
 
         log.debug("REST request to save category images");
         ImageDTO result = imageService.saveImagesForCategory(image,categoryId);
+        return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * {@code POST  /images} : set main image for Category.
+     *
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new imageDTO, or with status {@code 400 (Bad Request)} if the image has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @GetMapping("/images/category/main/{imageId}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<ImageDTO> setMainImageForCategory(@PathVariable Long imageId) throws URISyntaxException {
+
+        log.debug("REST request to set main image for category ");
+        Optional<Category> category=categoryService.findCategoryByImageId(imageId);
+        ImageDTO result = imageService.setMainImagesForCategory(imageId,category.get().getId());
+        return ResponseEntity.ok().body(result);
+    }
+
+
+    /**
+     * {@code POST  /images} : set main image for place.
+     *
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new imageDTO, or with status {@code 400 (Bad Request)} if the image has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @GetMapping("/images/place/main/{imageId}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<ImageDTO> setMainImageForPlace(@PathVariable Long imageId) throws URISyntaxException {
+
+        log.debug("REST request to set main image for Place");
+        Optional<Place> place=placeService.findPlaceByImageId(imageId);
+        ImageDTO result = imageService.setMainImagesForPlace(imageId,place.get().getId());
         return ResponseEntity.ok().body(result);
     }
 

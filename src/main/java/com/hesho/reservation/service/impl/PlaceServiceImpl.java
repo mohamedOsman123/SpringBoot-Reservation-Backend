@@ -99,4 +99,9 @@ public class PlaceServiceImpl implements PlaceService {
         log.debug("Request to delete Place : {}", id);
         placeRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<Place> findPlaceByImageId(Long imageId) {
+        return placeRepository.findByImageId(imageId);
+    }
 }

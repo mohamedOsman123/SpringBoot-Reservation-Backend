@@ -145,6 +145,21 @@ public class ImageServiceImpl implements ImageService {
             throw new StorageException("Could not read file: " + image);
         }
     }
+
+    @Override
+    public ImageDTO setMainImagesForCategory(Long imageId,Long categoryId){
+
+            Optional<Image> mainImage=imageRepository.findOneByCategoryIdAndMainIsTrue(categoryId);
+            if (mainImage.isPresent()){
+                mainImage.get().setMain(false);
+                imageRepository.save(mainImage.get());
+            }
+           Optional<Image> image=imageRepository.findById(imageId);
+            image.get().setMain(true);
+            return imageMapper.toDto(image.get());
+    }
+
+
     @Override
     @Transactional(readOnly = true)
     public Page<ImageDTO> findAll(Pageable pageable) {
@@ -252,5 +267,17 @@ public class ImageServiceImpl implements ImageService {
     public void delete(Long id) {
         log.debug("Request to delete Image : {}", id);
         imageRepository.deleteById(id);
+    }
+
+    @Override
+    public ImageDTO setMainImagesForPlace(Long imageId, Long placeId) {
+        Optional<Image> mainImage=imageRepository.findOneByPlaceIdAndMainIsTrue(placeId);
+        if (mainImage.isPresent()){
+            mainImage.get().setMain(false);
+            imageRepository.save(mainImage.get());
+        }
+        Optional<Image> image=imageRepository.findById(imageId);
+        image.get().setMain(true);
+        return imageMapper.toDto(image.get());
     }
 }

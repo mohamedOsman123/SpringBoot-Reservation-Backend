@@ -1,5 +1,6 @@
 package com.hesho.reservation.service;
 
+import com.hesho.reservation.domain.Category;
 import com.hesho.reservation.service.dto.CategoryDTO;
 
 import org.springframework.data.domain.Page;
@@ -43,4 +44,6 @@ public interface CategoryService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    Optional<Category> findCategoryByImageId(Long imageId);
 }

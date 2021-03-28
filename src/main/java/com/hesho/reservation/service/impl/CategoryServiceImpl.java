@@ -63,4 +63,11 @@ public class CategoryServiceImpl implements CategoryService {
         log.debug("Request to delete Category : {}", id);
         categoryRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<Category> findCategoryByImageId(Long imageId) {
+
+       return categoryRepository.findByImageId(imageId);
+
+    }
 }
