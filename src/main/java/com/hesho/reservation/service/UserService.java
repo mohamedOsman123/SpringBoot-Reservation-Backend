@@ -294,6 +294,11 @@ public class UserService {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public Optional<User> findCurrentUser() {
+        log.debug("Request to get current User");
+        return userRepository.findById(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId());
+    }
 
     private void clearUserCaches(User user) {
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evict(user.getLogin());

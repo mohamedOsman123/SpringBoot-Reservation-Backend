@@ -68,9 +68,14 @@ public class ReservationResource {
     @PostMapping("/reservations")
     public ResponseEntity<ReservationDTO> createReservation(@RequestBody ReservationDTO reservationDTO) throws URISyntaxException {
         log.debug("REST request to save Reservation : {}", reservationDTO);
-        if (reservationDTO.getId() != null) {
-            throw new BadRequestAlertException("A new reservation cannot already have an ID", ENTITY_NAME, "idexists");
+        Optional<User> user = userService.findCurrentUser();
+        if (!user.isPresent()) {
+            throw new BadRequestAlertException("No user detected", ENTITY_NAME, "noUser");
         }
+        if (reservationDTO.getId() != null) {
+            throw new BadRequestAlertException("A new reservation cannot already have an ID", ENTITY_NAME, "idExists");
+        }
+        reservationDTO.setUserId(user.get().getId());
         ReservationDTO result = reservationService.save(reservationDTO);
         return ResponseEntity.ok().body(result);
     }
@@ -87,9 +92,14 @@ public class ReservationResource {
     @PutMapping("/reservations")
     public ResponseEntity<ReservationDTO> updateReservation(@RequestBody ReservationDTO reservationDTO) throws URISyntaxException {
         log.debug("REST request to update Reservation : {}", reservationDTO);
+        Optional<User> user = userService.findCurrentUser();
+        if (!user.isPresent()) {
+            throw new BadRequestAlertException("No user detected", ENTITY_NAME, "noUser");
+        }
         if (reservationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        reservationDTO.setUserId(user.get().getId());
         ReservationDTO result = reservationService.save(reservationDTO);
         return ResponseEntity.ok().body(result);
     }
