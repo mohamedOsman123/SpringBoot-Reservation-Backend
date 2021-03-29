@@ -47,5 +47,4 @@ public interface PlaceService {
      */
     void delete(Long id);
 
-    Optional<Place> findPlaceByImageId(Long imageId);
 }

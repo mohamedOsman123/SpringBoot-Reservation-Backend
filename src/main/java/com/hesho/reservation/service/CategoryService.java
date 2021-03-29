@@ -45,5 +45,4 @@ public interface CategoryService {
      */
     void delete(Long id);
 
-    Optional<Category> findCategoryByImageId(Long imageId);
 }

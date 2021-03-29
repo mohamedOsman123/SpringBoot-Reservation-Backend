@@ -1,7 +1,9 @@
 package com.hesho.reservation.repository;
 
+import com.hesho.reservation.domain.Category;
 import com.hesho.reservation.domain.Image;
 
+import com.hesho.reservation.domain.Place;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +22,8 @@ public interface ImageRepository extends JpaRepository<Image, Long>, JpaSpecific
     Optional<Image> findOneByCategoryIdAndMainIsTrue(Long categoryId);
 
     Optional<Image> findOneByImageUrl(String imageUrl);
+
+    Optional<Category> findCategoryById(Long id);
+
+    Optional<Place> findPlaceById(Long id);
 }

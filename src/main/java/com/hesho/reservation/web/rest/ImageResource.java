@@ -127,11 +127,11 @@ public class ImageResource {
     public ResponseEntity<ImageDTO> setMainImageForCategory(@PathVariable Long imageId) throws URISyntaxException {
 
         log.debug("REST request to set main image for category ");
-        Optional<Category> category=categoryService.findCategoryByImageId(imageId);
+        Optional<Category> category=imageService.
+            findCategoryById(imageId);
         ImageDTO result = imageService.setMainImagesForCategory(imageId,category.get().getId());
         return ResponseEntity.ok().body(result);
     }
-
 
     /**
      * {@code POST  /images} : set main image for place.
@@ -144,7 +144,7 @@ public class ImageResource {
     public ResponseEntity<ImageDTO> setMainImageForPlace(@PathVariable Long imageId) throws URISyntaxException {
 
         log.debug("REST request to set main image for Place");
-        Optional<Place> place=placeService.findPlaceByImageId(imageId);
+        Optional<Place> place=imageService.findPlaceById(imageId);
         ImageDTO result = imageService.setMainImagesForPlace(imageId,place.get().getId());
         return ResponseEntity.ok().body(result);
     }

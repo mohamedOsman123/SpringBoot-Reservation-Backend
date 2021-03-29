@@ -1,5 +1,7 @@
 package com.hesho.reservation.service;
 
+import com.hesho.reservation.domain.Category;
+import com.hesho.reservation.domain.Place;
 import com.hesho.reservation.service.dto.ImageDTO;
 
 import org.springframework.core.io.UrlResource;
@@ -80,4 +82,8 @@ public interface ImageService {
     void delete(Long id);
 
     ImageDTO setMainImagesForPlace(Long imageId, Long place);
+
+    Optional<Category> findCategoryById(Long id);
+
+    Optional<Place> findPlaceById(Long id);
 }

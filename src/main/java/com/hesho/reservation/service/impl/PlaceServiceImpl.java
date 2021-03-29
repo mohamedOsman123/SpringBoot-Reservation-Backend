@@ -100,8 +100,4 @@ public class PlaceServiceImpl implements PlaceService {
         placeRepository.deleteById(id);
     }
 
-    @Override
-    public Optional<Place> findPlaceByImageId(Long imageId) {
-        return placeRepository.findByImageId(imageId);
-    }
 }

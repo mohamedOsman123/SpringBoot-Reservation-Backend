@@ -64,10 +64,5 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    @Override
-    public Optional<Category> findCategoryByImageId(Long imageId) {
 
-       return categoryRepository.findByImageId(imageId);
-
-    }
 }

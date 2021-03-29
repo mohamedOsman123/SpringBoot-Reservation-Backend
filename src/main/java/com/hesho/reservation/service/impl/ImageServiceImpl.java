@@ -280,4 +280,13 @@ public class ImageServiceImpl implements ImageService {
         image.get().setMain(true);
         return imageMapper.toDto(image.get());
     }
+    @Override
+    public Optional<Category> findCategoryById(Long imageId) {
+        return imageRepository.findCategoryById(imageId);
+    }
+    @Override
+    public Optional<Place> findPlaceById(Long id) {
+        return imageRepository.findPlaceById(id);
+    }
+
 }
