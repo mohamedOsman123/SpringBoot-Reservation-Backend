@@ -1,5 +1,6 @@
 package com.hesho.reservation.service;
 
+import com.hesho.reservation.domain.User;
 import com.hesho.reservation.domain.enumeration.ReservationStatus;
 import com.hesho.reservation.service.dto.ReservationDTO;
 
@@ -39,7 +40,7 @@ public interface ReservationService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<ReservationDTO> findOne(Long id);
+    Optional<ReservationDTO> findOne(Long id, User user);
 
     /**
      * Delete the "id" reservation.
@@ -47,4 +48,6 @@ public interface ReservationService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    ReservationDTO cancelReservation(Long id);
 }

@@ -1,6 +1,8 @@
 package com.hesho.reservation.service.impl;
 
+import com.hesho.reservation.domain.User;
 import com.hesho.reservation.domain.enumeration.ReservationStatus;
+import com.hesho.reservation.security.ReservationException;
 import com.hesho.reservation.service.ReservationService;
 import com.hesho.reservation.domain.Reservation;
 import com.hesho.reservation.repository.ReservationRepository;
@@ -54,7 +56,7 @@ public class ReservationServiceImpl implements ReservationService {
             return reservationMapper.toDto(reservation);
         }
         else{
-            throw new UsernameNotFoundException(id.toString());
+            throw new ReservationException("Reservation Not found for Id :"+id.toString());
         }
     }
 
@@ -70,9 +72,9 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ReservationDTO> findOne(Long id) {
+    public Optional<ReservationDTO> findOne(Long id, User user) {
         log.debug("Request to get Reservation : {}", id);
-        return reservationRepository.findById(id)
+        return reservationRepository.findByIdAndUser(id,user)
             .map(reservationMapper::toDto);
     }
 
@@ -80,5 +82,18 @@ public class ReservationServiceImpl implements ReservationService {
     public void delete(Long id) {
         log.debug("Request to delete Reservation : {}", id);
         reservationRepository.deleteById(id);
+    }
+
+    @Override
+    public ReservationDTO cancelReservation(Long id) {
+        log.debug("Request to cancel Reservation Status: {}", id);
+        Optional<Reservation> reservation=reservationRepository.findById(id);
+        if (reservation.isPresent()) {
+            reservation.get().setStatus(ReservationStatus.CANCELED);
+            return reservationMapper.toDto(reservationRepository.save(reservation.get()));
+        }
+        else{
+            throw new ReservationException("Reservation Not found for Id :"+id.toString());
+        }
     }
 }
