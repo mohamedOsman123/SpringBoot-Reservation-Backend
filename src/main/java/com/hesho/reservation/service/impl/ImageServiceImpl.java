@@ -15,7 +15,6 @@ import io.github.jhipster.security.RandomUtil;
 import liquibase.pro.packaged.I;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.UrlResource;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,7 +71,6 @@ public class ImageServiceImpl implements ImageService {
         this.placeRepository=placeRepository;
         this.categoryRepository=categoryRepository;
     }
-
     @Override
     public ImageDTO save(ImageDTO imageDTO) {
         log.debug("Request to save Image : {}", imageDTO);
@@ -81,7 +78,6 @@ public class ImageServiceImpl implements ImageService {
         image = imageRepository.save(image);
         return imageMapper.toDto(image);
     }
-
     @Override
     public ImageDTO saveImagesForPlace(MultipartFile image, Long placeId){
         // find place by placeId
@@ -145,7 +141,6 @@ public class ImageServiceImpl implements ImageService {
             throw new StorageException("Could not read file: " + image);
         }
     }
-
     @Override
     public ImageDTO setMainImagesForCategory(Long imageId,Long categoryId){
 
@@ -158,7 +153,6 @@ public class ImageServiceImpl implements ImageService {
             image.get().setMain(true);
             return imageMapper.toDto(image.get());
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -175,7 +169,6 @@ public class ImageServiceImpl implements ImageService {
         return imageRepository.findById(id)
             .map(imageMapper::toDto);
     }
-
     @Override
     @Transactional(readOnly = true)
     public UrlResource findOneByImageUrl(String imageName){
@@ -233,8 +226,6 @@ public class ImageServiceImpl implements ImageService {
             throw new ImageException(e);
         }
     }
-
-
 
     @Override
     @Transactional(readOnly = true)
